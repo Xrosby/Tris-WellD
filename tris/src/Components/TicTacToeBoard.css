@@ -1,0 +1,23 @@
+#board {
+  width: 500px;
+  height: 500px;
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-rows: 1fr;
+  overflow: hidden;
+}
+
+#board div {
+  outline: 4px solid #ffffff;
+}
+
+#board div:last-child {
+  grid-area: 3/3;
+}
+
+.player-X {
+  color: darkgoldenrod;
+}
+.player-O {
+  color: rgb(6, 84, 101);
+}

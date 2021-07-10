@@ -1,0 +1,19 @@
+.cell {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  font-size: 100px;
+  font-weight: bolder;
+}
+
+.cell:hover {
+  cursor: pointer;
+}
+
+.cell.X {
+  color: darkgoldenrod;
+}
+
+.cell.O {
+  color: rgb(6, 84, 101);
+}
