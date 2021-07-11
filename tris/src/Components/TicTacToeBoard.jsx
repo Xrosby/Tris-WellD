@@ -2,6 +2,7 @@ import "./TicTacToeBoard.css";
 import Cell from "./Cell";
 import { useState, useEffect } from "react";
 import RestartButton from "./RestartButton";
+import $ from "jquery";
 
 function TicTacToeBoard() {
   const [board, setBoard] = useState(new Array(9).fill(null));
@@ -9,38 +10,67 @@ function TicTacToeBoard() {
   const [currentPlayer, setCurrentPlayer] = useState("X");
   const [gameFinished, setGameFinished] = useState(false);
   const [draw, setDraw] = useState(false);
+  const [winningBoard, setWinningBoard] = useState([]);
 
   useEffect(() => {
-    if (!board.includes(null)) {
-      setGameFinished(true);
-      setDraw(true);
-    } else {
-      const horizontal = [0, 3, 6].map((i) => {
-        return [i, i + 1, i + 2];
-      });
-      const vertical = [0, 1, 2].map((i) => {
-        return [i, i + 3, i + 6];
-      });
-      const diagonal = [
-        [0, 4, 8],
-        [2, 4, 6],
-      ];
+    const horizontal = [0, 3, 6].map((i) => {
+      return [i, i + 1, i + 2];
+    });
+    const vertical = [0, 1, 2].map((i) => {
+      return [i, i + 3, i + 6];
+    });
+    const diagonal = [
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
 
-      let winArrays = [].concat(horizontal).concat(vertical).concat(diagonal);
-      let winner = winArrays.some((indices) => {
-        return (
-          board[indices[0]] == currentPlayer &&
-          board[indices[1]] == currentPlayer &&
-          board[indices[2]] == currentPlayer
-        );
-      });
-      setGameFinished(winner);
-      if (!winner) {
-        let newPlayer = currentPlayer === "O" ? "X" : "O";
-        setCurrentPlayer(newPlayer);
+    let winArrays = [].concat(horizontal).concat(vertical).concat(diagonal);
+    let winner = winArrays.some((indices) => {
+      if (
+        board[indices[0]] == currentPlayer &&
+        board[indices[1]] == currentPlayer &&
+        board[indices[2]] == currentPlayer
+      ) {
+        setWinningBoard(indices);
+      }
+      return (
+        board[indices[0]] == currentPlayer &&
+        board[indices[1]] == currentPlayer &&
+        board[indices[2]] == currentPlayer
+      );
+    });
+    setGameFinished(winner);
+    if (!winner) {
+      let newPlayer = currentPlayer === "O" ? "X" : "O";
+      setCurrentPlayer(newPlayer);
+      if (!board.includes(null)) {
+        setGameFinished(true);
+        setDraw(true);
       }
     }
   }, [board]);
+
+  useEffect(() => {
+    let highlightWinner = () => {
+      let winningCell = null;
+      for (let winningIndex of winningBoard) {
+        winningCell = document.getElementById("cell-" + winningIndex);
+        //winningCell.style.border = "none"
+        //winningCell.style.transition = "ease-in .3s";
+        // winningCell.style.backgroundColor = "rgba(255,255,255,.1)";
+        let color =
+          currentPlayer === "X"
+            ? "rgba(	184, 134, 11,.5)"
+            : "rgba(6, 84, 101, 0.5)";
+        window
+          .$("#" + "cell-" + winningIndex)
+          .effect("highlight", { color: color }, 2000);
+      }
+    };
+    if (gameFinished && !draw) {
+      highlightWinner();
+    }
+  }, [winningBoard]);
 
   let handleCellClick = (i) => {
     if (!gameFinished) {
@@ -57,26 +87,28 @@ function TicTacToeBoard() {
   };
 
   let displayCurrentEvent = () => {
+    let finishedGameMessage = () => {};
+
     if (draw) {
       return (
-        <h3>
+        <h1>
           <span className="player-X">X</span>
           <span className="player-O">O</span> DRAW!
-        </h3>
+        </h1>
       );
     } else if (gameFinished) {
       return (
-        <h3>
+        <h1>
           <span className={"player-" + currentPlayer}>{currentPlayer}</span>{" "}
           WINS!
-        </h3>
+        </h1>
       );
     } else {
       return (
-        <h3>
+        <h1>
           <span className={"player-" + currentPlayer}>{currentPlayer}</span>'S
           TURN
-        </h3>
+        </h1>
       );
     }
   };
@@ -86,6 +118,11 @@ function TicTacToeBoard() {
     setGameFinished(false);
     setBoard(new Array(9).fill(null));
     setCurrentPlayer("O");
+    setWinningBoard([]);
+    let cells = document.getElementsByClassName("cell");
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].removeAttribute("style");
+    }
   };
 
   return (
@@ -95,6 +132,7 @@ function TicTacToeBoard() {
         {board.map((value, i) => {
           return (
             <Cell
+              winningCell={winningBoard.includes[i]}
               gameFinished={gameFinished}
               callBack={handleCellClick}
               key={"cell" + i}
