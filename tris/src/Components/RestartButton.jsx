@@ -7,7 +7,7 @@ function RestartButton(props) {
       type="button"
       className="btn-restart"
     >
-      Restart game
+      RESTART GAME
     </button>
   );
 }
