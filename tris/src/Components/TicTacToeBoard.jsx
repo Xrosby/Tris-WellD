@@ -2,7 +2,6 @@ import "./TicTacToeBoard.css";
 import Cell from "./Cell";
 import { useState, useEffect } from "react";
 import RestartButton from "./RestartButton";
-import $ from "jquery";
 
 function TicTacToeBoard() {
   const [board, setBoard] = useState(new Array(9).fill(null));
@@ -55,9 +54,6 @@ function TicTacToeBoard() {
       let winningCell = null;
       for (let winningIndex of winningBoard) {
         winningCell = document.getElementById("cell-" + winningIndex);
-        //winningCell.style.border = "none"
-        //winningCell.style.transition = "ease-in .3s";
-        // winningCell.style.backgroundColor = "rgba(255,255,255,.1)";
         let color =
           currentPlayer === "X"
             ? "rgba(	184, 134, 11,.5)"
