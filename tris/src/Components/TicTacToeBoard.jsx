@@ -6,7 +6,7 @@ import RestartButton from "./RestartButton";
 function TicTacToeBoard() {
   const [board, setBoard] = useState(new Array(9).fill(null));
 
-  const [currentPlayer, setCurrentPlayer] = useState("X");
+  const [currentPlayer, setCurrentPlayer] = useState("O");
   const [gameFinished, setGameFinished] = useState(false);
   const [draw, setDraw] = useState(false);
   const [winningBoard, setWinningBoard] = useState([]);
@@ -25,18 +25,14 @@ function TicTacToeBoard() {
 
     let winArrays = [].concat(horizontal).concat(vertical).concat(diagonal);
     let winner = winArrays.some((indices) => {
-      if (
-        board[indices[0]] == currentPlayer &&
-        board[indices[1]] == currentPlayer &&
-        board[indices[2]] == currentPlayer
-      ) {
+      let match =
+        board[indices[0]] === currentPlayer &&
+        board[indices[1]] === currentPlayer &&
+        board[indices[2]] === currentPlayer;
+      if (match) {
         setWinningBoard(indices);
       }
-      return (
-        board[indices[0]] == currentPlayer &&
-        board[indices[1]] == currentPlayer &&
-        board[indices[2]] == currentPlayer
-      );
+      return match;
     });
     setGameFinished(winner);
     if (!winner) {
@@ -51,7 +47,7 @@ function TicTacToeBoard() {
 
   useEffect(() => {
     let highlightWinner = () => {
-      let winningCell = null;
+      let winningCell;
       for (let winningIndex of winningBoard) {
         winningCell = document.getElementById("cell-" + winningIndex);
         let color =
@@ -59,7 +55,7 @@ function TicTacToeBoard() {
             ? "rgba(	184, 134, 11,.5)"
             : "rgba(6, 84, 101, 0.5)";
         window
-          .$("#" + "cell-" + winningIndex)
+          .$("#cell-" + winningIndex)
           .effect("highlight", { color: color }, 2000);
       }
     };
@@ -83,8 +79,6 @@ function TicTacToeBoard() {
   };
 
   let displayCurrentEvent = () => {
-    let finishedGameMessage = () => {};
-
     if (draw) {
       return (
         <h1>
@@ -128,7 +122,6 @@ function TicTacToeBoard() {
         {board.map((value, i) => {
           return (
             <Cell
-              winningCell={winningBoard.includes[i]}
               gameFinished={gameFinished}
               callBack={handleCellClick}
               key={"cell" + i}
